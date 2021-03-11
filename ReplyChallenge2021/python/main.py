@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from sklearn.cluster import KMeans
+from sklearn.cluster import MiniBatchKMeans
 from pprint import pprint
 
 import sys
@@ -98,9 +98,21 @@ def solution(handler):
 		antennas.append((x,int(res[0]),int(res[1])))
 	#pprint(matrix)
 
+	buildings.sort(key=lambda buildings:buildings[3])
+	antennas.sort(key=lambda antennas:antennas[1])
+
+	antLow = []
+	antHigh = []
+
+	for ant in antennas:
+		if ant[1] < 2:
+			antLow.append(ant)
+		else:
+			antHigh.append(ant)
+
 	#arr - kmeans
 	print("init kmeans")
-	kmeans = KMeans(n_clusters=antCount, random_state=0).fit(arr)
+	kmeans = MiniBatchKMeans(n_clusters=len(antHigh), random_state=0).fit(arr)
 	print("ended kmeans")
 
 	labels = kmeans.labels_
@@ -117,7 +129,7 @@ def solution(handler):
 		final.append((key,len(clusters[key])))
 
 	final.sort(key=lambda final:final[1], reverse=True)
-	antennas.sort(key=lambda antennas:antennas[1])
+	antennas.sort(key=lambda antennas:antennas[1], reverse=True)
 
 	#print(centroids)
 	#print(clusters)
@@ -125,12 +137,15 @@ def solution(handler):
 	
 	output.write(str(antCount) + "\n")
 
+	for x in range(0,len(antLow)):
+		output.write(str(antLow[x][0]) + " " + str(buildings[x][0]) + " " + str(buildings[x][1]) + "\n")
+
 	for val in range(0,len(final)):
 		x = centroids[final[val][0]][1]
 		y = centroids[final[val][0]][0]
 
 		#print(str(x) + " " + str(y))
-		output.write(str(antennas[val][0]) + " " + str(x) + " " + str(y) + "\n")
+		output.write(str(antHigh[val][0]) + " " + str(x) + " " + str(y) + "\n")
 
 	output.close()
 
