@@ -73,6 +73,7 @@ def solution(handler):
 	buildings = []
 	antennas = []
 
+	final = []
 	arr = []
 	matrix = [ [ 0 for i in range(width) ] for j in range(height) ] 
 
@@ -110,6 +111,19 @@ def solution(handler):
 		else:
 			antHigh.append(ant)
 
+	final.sort(key=lambda final:final[1], reverse=True)
+	antennas.sort(key=lambda antennas:antennas[1], reverse=True)
+
+	#print(centroids)
+	#print(clusters)
+	#print(final)
+	
+	output.write(str(antCount) + "\n")
+
+	for x in range(0,len(antLow)):
+		output.write(str(antLow[x][0]) + " " + str(buildings[x][0]) + " " + str(buildings[x][1]) + "\n")
+		arr.remove([buildings[x][1],buildings[x][0]])
+
 	#arr - kmeans
 	print("init kmeans")
 	kmeans = MiniBatchKMeans(n_clusters=len(antHigh), random_state=0).fit(arr)
@@ -124,21 +138,8 @@ def solution(handler):
 			clusters[labels[val]] = []
 		clusters[labels[val]].append(val)
 
-	final = []
 	for key in clusters:
 		final.append((key,len(clusters[key])))
-
-	final.sort(key=lambda final:final[1], reverse=True)
-	antennas.sort(key=lambda antennas:antennas[1], reverse=True)
-
-	#print(centroids)
-	#print(clusters)
-	#print(final)
-	
-	output.write(str(antCount) + "\n")
-
-	for x in range(0,len(antLow)):
-		output.write(str(antLow[x][0]) + " " + str(buildings[x][0]) + " " + str(buildings[x][1]) + "\n")
 
 	for val in range(0,len(final)):
 		x = centroids[final[val][0]][1]
